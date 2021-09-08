@@ -1,11 +1,10 @@
 <template>
 <div id="chat">
     <div class="log">
-        {{ message }}
     </div>
     <div class="message">
-        <input type="text" v-model="message" placeholder="Type a message...">
-        <img src="@/assets/send.svg" alt="">
+        <input type="text" v-model="message" @keyup.enter="sendMessage" placeholder="Type a message...">
+        <img @click="sendMessage" src="@/assets/send.svg" alt="">
     </div>
 </div>
 </template>
@@ -18,7 +17,13 @@ export default {
         return {
             message: ''
         }
-    }    
+    },
+    methods: {
+        sendMessage: function() {
+            this.$emit('message', this.message)
+            this.message = ''
+        }
+    }
 }
 
 </script>

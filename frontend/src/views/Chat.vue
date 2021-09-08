@@ -2,7 +2,10 @@
 <div id="chat">
   <div class="container">
     <ChatSidebar></ChatSidebar>
-    <ChatLog></ChatLog>
+    <ChatLog
+      @message="sendMessage"
+    >
+    </ChatLog>
   </div>
 </div>
 
@@ -18,6 +21,31 @@ export default {
   components: {
     ChatSidebar,
     ChatLog,
+  },
+  data() {
+    return {
+      connection: null,
+    }
+  },
+  methods: {
+    sendMessage: function(message) {
+      const data = {
+        'message': message
+      }
+      this.connection.send(JSON.stringify(data))
+    }
+  },
+  created() {
+    this.connection = new WebSocket("ws://127.0.0.1:8000/ws/chat/user/")
+
+    this.connection.onmessage = (event) => {
+      console.log(event)
+    }
+
+    this.connection.onopen = (event) => {
+      console.log(event)
+      console.log('open')
+    }
   },
   computed: mapState({
     accessToken: state => state.account.accessToken,
