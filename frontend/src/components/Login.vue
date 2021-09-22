@@ -26,7 +26,7 @@ export default {
         email: this.email,
         password: this.password
       })
-      .then(() => {
+      .then((data) => {
         this.$router.push({ name: "Chat"})
       })
       .catch((error) => {
@@ -39,9 +39,6 @@ export default {
     }
   },
   computed: {
-    counter() {
-      return this.$store.state.counter
-    }
   }
 }
 </script>

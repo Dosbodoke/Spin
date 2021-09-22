@@ -1,9 +1,15 @@
 <template>
 <div id="chat">
     <div class="log">
+        <div v-for="(message, index) in messages"
+             :key="index"
+             class="message"
+        >
+            {{ message.message }}
+        </div>
     </div>
-    <div class="message">
-        <input type="text" v-model="message" @keyup.enter="sendMessage" placeholder="Type a message...">
+    <div class="message_input">
+        <input type="text" v-model="message_input" @keyup.enter="sendMessage" placeholder="Type a message...">
         <img @click="sendMessage" src="@/assets/send.svg" alt="">
     </div>
 </div>
@@ -15,15 +21,23 @@ export default {
     name: 'ChatLog',
     data () {
         return {
-            message: ''
+            message_input: '',
+            messages: [{'name': 'bodok', 'message': 'New Message From me!'}, {'name': 'carl', 'message': 'Another message for test purpose'}]
         }
     },
     methods: {
         sendMessage: function() {
-            this.$emit('message', this.message)
-            this.message = ''
+            this.$emit('message', this.message_input)
+            this.message_input = ''
+        },
+        logMessage (data) {
+            const message = data['message']
+            this.messages.push({
+                'name': 'foo',
+                'message': message
+            })
         }
-    }
+    },
 }
 
 </script>
@@ -34,8 +48,21 @@ export default {
     position: relative;
     flex-grow: 1;
     background-color: #2C394B;
+    
+    .log {
+        height: calc(100% - 40px);
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
 
-    .message {
+        .message {
+            position: relative;
+            bottom: 0;
+        }
+    }
+
+    .message_input {
         height: 40px;
         background-color: #1a212c;
         position: absolute;

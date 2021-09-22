@@ -3,7 +3,8 @@
   <div class="container">
     <ChatSidebar></ChatSidebar>
     <ChatLog
-      @message="sendMessage"
+      @message="sendMessage" 
+      ref="chatLog"
     >
     </ChatLog>
   </div>
@@ -36,20 +37,31 @@ export default {
     }
   },
   created() {
-    this.connection = new WebSocket("ws://127.0.0.1:8000/ws/chat/user/")
-
-    this.connection.onmessage = (event) => {
-      console.log(event)
-    }
+    this.connection = new WebSocket(
+      'ws://'
+      + window.location.hostname
+      + ':8000/ws/chat/'
+// HERE SHOULD BE THE room_name.
+//      + this.firstName
+      + 'USER'
+      + '/'
+    )
 
     this.connection.onopen = (event) => {
-      console.log(event)
-      console.log('open')
     }
+
+    this.connection.onmessage = (event) => {
+      this.$refs.chatLog.logMessage(JSON.parse(event.data))
+    }
+
+    this.connection.onclose = (event) => {
+    }
+
   },
   computed: mapState({
     accessToken: state => state.account.accessToken,
     refreshToken: state => state.account.refreshToken,
+    firstName: state => state.account.firstName,
   })
 }
 </script>
