@@ -41,9 +41,7 @@ export default {
       'ws://'
       + window.location.hostname
       + ':8000/ws/chat/'
-// HERE SHOULD BE THE room_name.
-//      + this.firstName
-      + 'USER'
+      + this.username
       + '/'
     )
 
@@ -61,6 +59,7 @@ export default {
   computed: mapState({
     accessToken: state => state.account.accessToken,
     refreshToken: state => state.account.refreshToken,
+    username: state => state.account.username,
     firstName: state => state.account.firstName,
   })
 }

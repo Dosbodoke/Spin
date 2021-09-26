@@ -5,6 +5,7 @@ const accountStore = {
     state: {
       accessToken: null,
       refreshToken: null,
+      username: null,
       firstName: null,
       lastName: null,
     },
@@ -13,7 +14,8 @@ const accountStore = {
         state.accessToken = access
         state.refreshToken = refresh
       },
-      updateUserCredentials(state, { firstName, lastName }) {
+      updateUserCredentials(state, { username, firstName, lastName }) {
+        state.username = username
         state.firstName = firstName
         state.lastName = lastName
       }
@@ -22,7 +24,7 @@ const accountStore = {
       userLogin(context, userCredentials) {
         return new Promise ((resolve, reject) => {
           getAPI.post('auth/api-token/', {
-            email: userCredentials.email,
+            username: userCredentials.username,
             password: userCredentials.password
           })
             .then(response => {
@@ -31,6 +33,7 @@ const accountStore = {
                 refresh: response.data.refresh,
               })
               context.commit('updateUserCredentials', {
+                username: userCredentials.username,
                 firstName: response.data.first_name,
                 lasName: response.data.last_name,
               })

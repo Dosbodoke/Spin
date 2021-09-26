@@ -1,10 +1,10 @@
 <template>
     <form @submit.prevent="login">
-        <label for="email">E-mail</label>
-        <input v-model="email" type="text" name="email" id="email" placeholder="E-mail">
+        <label for="username">Username</label>
+        <input v-model="username" type="text" name="username" id="username" placeholder="Your Username">
         <label for="password">Password</label>
         <input v-model="password" type="password" name="password" id="password" placeholder="Password">
-        <div v-if="incorrectAuth" class="error">Incorrect e-mail or password</div>
+        <div v-if="incorrectAuth" class="error">Incorrect username or password</div>
         <button>Login</button>
         <div>Don't have an account? Sing-up here</div>
     </form>
@@ -15,7 +15,7 @@ export default {
   name: 'Login',
   data () {
     return {
-      email: '',
+      username: '',
       password: '',
       incorrectAuth: false,
     }
@@ -23,7 +23,7 @@ export default {
   methods: {
     login () {
       this.$store.dispatch('account/userLogin', {
-        email: this.email,
+        username: this.username,
         password: this.password
       })
       .then((data) => {
