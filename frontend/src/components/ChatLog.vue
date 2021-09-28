@@ -27,7 +27,7 @@ export default {
     },
     methods: {
         sendMessage: function() {
-            this.$emit('message', this.message_input)
+            this.$emit('sendMessage', this.message_input)
             this.message_input = ''
         },
         logMessage (data) {

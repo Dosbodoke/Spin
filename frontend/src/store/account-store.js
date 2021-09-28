@@ -6,24 +6,20 @@ const accountStore = {
       accessToken: null,
       refreshToken: null,
       username: null,
-      firstName: null,
-      lastName: null,
     },
     mutations: {
       updateToken(state, { access, refresh }) {
         state.accessToken = access
         state.refreshToken = refresh
       },
-      updateUserCredentials(state, { username, firstName, lastName }) {
+      updateUserCredentials(state, { username }) {
         state.username = username
-        state.firstName = firstName
-        state.lastName = lastName
       }
     },
     actions: {
-      userLogin(context, userCredentials) {
+      Login(context, userCredentials) {
         return new Promise ((resolve, reject) => {
-          getAPI.post('auth/api-token/', {
+          getAPI.post('api/auth/token/', {
             username: userCredentials.username,
             password: userCredentials.password
           })
@@ -34,9 +30,21 @@ const accountStore = {
               })
               context.commit('updateUserCredentials', {
                 username: userCredentials.username,
-                firstName: response.data.first_name,
-                lasName: response.data.last_name,
               })
+              resolve()
+            })
+            .catch(error => {
+              reject()
+            })
+        })
+      },
+      Register(context, userCredentials) {
+        return new Promise ((resolve, reject) => {
+          getAPI.post('api/auth/register/', {
+            username: userCredentials.username,
+            password: userCredentials.password
+          })
+            .then(response => {
               resolve()
             })
             .catch(error => {

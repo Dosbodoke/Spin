@@ -6,7 +6,7 @@
         <input v-model="password" type="password" name="password" id="password" placeholder="Password">
         <div v-if="incorrectAuth" class="error">Incorrect username or password</div>
         <button>Login</button>
-        <div>Don't have an account? Sing-up here</div>
+        <div>Don't have an account? <router-link class="router__link" to='/register'>Register here</router-link></div>
     </form>
 </template>
 
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     login () {
-      this.$store.dispatch('account/userLogin', {
+      this.$store.dispatch('account/Login', {
         username: this.username,
         password: this.password
       })
@@ -71,6 +71,11 @@ form {
     background-color: #FF4C29;
     padding: 1rem 0;
     cursor: pointer;
+  }
+
+  .router__link {
+    color: #FF4C29;
+    text-decoration: none;
   }
 }
 </style>

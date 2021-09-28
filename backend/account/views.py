@@ -1,15 +1,17 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomUserSerializer
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 
-class TokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        refresh = self.get_token(self.user)
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'first_name': self.user.first_name,
-        }
+class CustomUserCreateAPIView(generics.CreateAPIView):
+    """
+        Concrete APIView to create account
+        On save(), a signal is dispatched to create a Contact instance
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = CustomUserSerializer
 
-class TokenObtainPairView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
+    # hash password
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        instance.set_password(instance.password)
+        instance.save()

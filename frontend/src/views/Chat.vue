@@ -3,7 +3,7 @@
   <div class="container">
     <ChatSidebar></ChatSidebar>
     <ChatLog
-      @message="sendMessage" 
+      @sendMessage="sendMessage" 
       ref="chatLog"
     >
     </ChatLog>
@@ -60,7 +60,6 @@ export default {
     accessToken: state => state.account.accessToken,
     refreshToken: state => state.account.refreshToken,
     username: state => state.account.username,
-    firstName: state => state.account.firstName,
   })
 }
 </script>
