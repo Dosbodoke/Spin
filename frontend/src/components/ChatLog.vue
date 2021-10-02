@@ -3,8 +3,7 @@
     <div class="log">
         <div v-for="(message, index) in messages"
              :key="index"
-             class="message"
-        >
+             class="message">
             {{ message.message }}
         </div>
     </div>
@@ -21,21 +20,38 @@ export default {
     name: 'ChatLog',
     data () {
         return {
+            connection: null,
             message_input: '',
             messages: [{'name': 'bodok', 'message': 'New Message From me!'}, {'name': 'carl', 'message': 'Another message for test purpose'}]
         }
     },
     methods: {
-        sendMessage: function() {
-            this.$emit('sendMessage', this.message_input)
+        sendMessage() {
+            this.connection.send(JSON.stringify({
+                'message': this.message_input
+            }))
             this.message_input = ''
         },
-        logMessage (data) {
-            const message = data['message']
-            this.messages.push({
-                'name': 'foo',
-                'message': message
-            })
+        chatConnect(contactId) {
+            this.connection = new WebSocket(
+                'ws://'
+                + window.location.hostname
+                + ':8000/ws/chat/'
+                + contactId
+                + '/'
+            )
+
+            this.connection.onopen = (event) => {
+                console.log('open')
+            }
+
+            this.connection.onmessage = (event) => {
+                console.log('message on chatLog')
+                console.log('user:', this.username)
+            }
+
+            this.connection.onclose = (event) => {
+            }
         }
     },
 }

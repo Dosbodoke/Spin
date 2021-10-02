@@ -8,11 +8,11 @@ const accountStore = {
       username: null,
     },
     mutations: {
-      updateToken(state, { access, refresh }) {
+      setToken(state, { access, refresh }) {
         state.accessToken = access
         state.refreshToken = refresh
       },
-      updateUserCredentials(state, { username }) {
+      setUsername(state, { username }) {
         state.username = username
       }
     },
@@ -24,11 +24,11 @@ const accountStore = {
             password: userCredentials.password
           })
             .then(response => {
-              context.commit('updateToken', {
+              context.commit('setToken', {
                 access: response.data.access,
                 refresh: response.data.refresh,
               })
-              context.commit('updateUserCredentials', {
+              context.commit('setUsername', {
                 username: userCredentials.username,
               })
               resolve()

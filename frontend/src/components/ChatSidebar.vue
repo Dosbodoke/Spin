@@ -19,6 +19,17 @@
             <input type="text" placeholder="Contact Username" id="addContact" v-model="addFriendUsername" @keypress.enter="addContact">
         </div>
     </div>
+    <div v-for="friend in friends"
+        :key="friend.id"
+        class="contact"
+        @click="chatContact(friend.id)"
+        >
+        <img src="" alt="" class="contact__img">
+        <div class="contact__info">
+            <div class="contact__info__name">{{ friend.username }}</div>
+            <p class="contact__info__status">STATUS PLACEHOLDER TO SEE WHAT HAPPENS WHEN IS TOO BIG BLA BLA BLA BLA BLA BLA</p>
+        </div> 
+    </div>
 </div>
 </template>
 
@@ -26,6 +37,7 @@
 import { mapState } from 'vuex'
 import { faUserPlus, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { getAPI } from '@/axios-api'
 
 export default {
     name: 'ChatSidebar',
@@ -34,22 +46,57 @@ export default {
     },
     data () {
         return {
+            addFriendUsername: '',
             icons: {
                 'faUserPlus': faUserPlus,
                 'faUserCog': faUserCog,
             },
-            addFriendUsername: '',
+            friends: []
         }
     },
-    created () {
+    async created () {
+        const contact = await this.getContact()
+        this.friends = contact.friends
+        this.connection = new WebSocket(
+            'ws://'
+            + window.location.hostname
+            + ':8000/ws/chat/'
+            + contact.id
+            + '/'
+        )
+
+        this.connection.onopen = (event) => {
+        }
+
+        this.connection.onmessage = (event) => {
+            console.log(event.data)
+            console.log('message on ChatSidebar')
+            console.log('user:', this.username)
+        }
+
+        this.connection.onclose = (event) => {
+        }
     },
     methods: {
-        addContact () {
-            console.log("sadsad")
+        async getContact() {
+            let response = await getAPI.get(`api/contact/${this.username}/`, {
+                headers: {Authorization: 'Bearer ' + this.accessToken}
+            })
+            return await response.data
+        },
+        async addContact () {
+            let response = await getAPI.get(`api/contact/${this.username}/`, {
+                headers: {Authorization: 'Bearer ' + this.accessToken}
+            })
+            console.log(await response.data)
+        },
+        chatContact(contactId) {
+            this.$emit('chatContact', contactId)
         },
     },
     computed: mapState({
-        username: state => state.account.username
+        username: state => state.account.username,
+        accessToken: state => state.account.accessToken,
     })
 }
 
@@ -60,6 +107,10 @@ export default {
 #sidebar {
     width: 300px;
     background-color: #37475e;
+
+    &>* {
+        padding: 10px;
+    }
 
     .contact {
         display: flex;
@@ -90,11 +141,15 @@ export default {
                 white-space: nowrap;
             }
         }
+
+        &:hover {
+            background-color: #485f80;
+            cursor: pointer;
+        }
     }
 
     .profile {
         background-color: #1a212c;
-        padding: 10px;
 
         &__settings {
             margin-top: 10px;

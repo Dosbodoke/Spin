@@ -1,9 +1,18 @@
 from django.db import models
-from django.db.models import fields
 from rest_framework import serializers
+from rest_framework.fields import ReadOnlyField
 from .models import Message, Contact
+from .models import Contact
+
+class FriendSerializer(serializers.ModelSerializer):
+    user_id = ReadOnlyField(source='user.id')
+    username = ReadOnlyField(source='user.username')
+    class Meta:
+        model = Contact
+        fields = ['id', 'user_id', 'username',]
 
 class ContactSerializer(serializers.ModelSerializer):
+    friends = FriendSerializer(many=True, read_only=True)
     class Meta:
         model = Contact
         fields = '__all__'

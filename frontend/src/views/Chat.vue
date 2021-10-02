@@ -1,12 +1,8 @@
 <template>
 <div id="chat">
   <div class="container">
-    <ChatSidebar></ChatSidebar>
-    <ChatLog
-      @sendMessage="sendMessage" 
-      ref="chatLog"
-    >
-    </ChatLog>
+    <ChatSidebar @chatContact="emitContactId"></ChatSidebar>
+    <ChatLog ref="chatLog"></ChatLog>
   </div>
 </div>
 
@@ -29,32 +25,9 @@ export default {
     }
   },
   methods: {
-    sendMessage: function(message) {
-      const data = {
-        'message': message
-      }
-      this.connection.send(JSON.stringify(data))
-    }
-  },
-  created() {
-    this.connection = new WebSocket(
-      'ws://'
-      + window.location.hostname
-      + ':8000/ws/chat/'
-      + this.username
-      + '/'
-    )
-
-    this.connection.onopen = (event) => {
-    }
-
-    this.connection.onmessage = (event) => {
-      this.$refs.chatLog.logMessage(JSON.parse(event.data))
-    }
-
-    this.connection.onclose = (event) => {
-    }
-
+    emitContactId(contactId) {
+      this.$refs.chatLog.chatConnect(contactId);
+    },
   },
   computed: mapState({
     accessToken: state => state.account.accessToken,
