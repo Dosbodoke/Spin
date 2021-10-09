@@ -1,23 +1,23 @@
 from django.db import models
+from django.db.models import fields
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
-from .models import Message, Contact
-from .models import Contact
-
-class FriendSerializer(serializers.ModelSerializer):
-    user_id = ReadOnlyField(source='user.id')
-    username = ReadOnlyField(source='user.username')
-    class Meta:
-        model = Contact
-        fields = ['id', 'user_id', 'username',]
-
-class ContactSerializer(serializers.ModelSerializer):
-    friends = FriendSerializer(many=True, read_only=True)
-    class Meta:
-        model = Contact
-        fields = '__all__'
+from .models import Message, Room
+from account.models import CustomUser
 
 class MessageSerializer(serializers.ModelSerializer):
+    sender = ReadOnlyField(source='sender.username')
     class Meta:
         model = Message
+        fields = ('id', 'message', 'sender', 'created_at')
+
+class ParticipantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('username', )
+
+class RoomSerializer(serializers.ModelSerializer):
+    participants = ParticipantSerializer(many=True)
+    class Meta:
+        model = Room
         fields = '__all__'

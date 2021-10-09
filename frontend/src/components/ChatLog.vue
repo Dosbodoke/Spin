@@ -1,8 +1,8 @@
 <template>
 <div id="chat">
     <div class="log">
-        <div v-for="(message, index) in messages"
-             :key="index"
+        <div v-for="message in messages"
+             :key="message.id"
              class="message">
             {{ message.message }}
         </div>
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
 export default {
     name: 'ChatLog',
@@ -22,22 +23,33 @@ export default {
         return {
             connection: null,
             message_input: '',
-            messages: [{'name': 'bodok', 'message': 'New Message From me!'}, {'name': 'carl', 'message': 'Another message for test purpose'}]
         }
     },
     methods: {
         sendMessage() {
             this.connection.send(JSON.stringify({
-                'message': this.message_input
+                'message': this.message_input,
+                'sender': this.username,
+                'roomId': this.roomId
             }))
             this.message_input = ''
         },
-        chatConnect(contactId) {
+        connectToRoom(roomId) {
+            if (this.connection != null) {
+                this.connection.close()
+            }
+
+            this.$store.dispatch('room/updateRoomId', {
+                roomId: roomId,
+            })
+
+            this.$store.dispatch('room/getMessages')
+            
             this.connection = new WebSocket(
                 'ws://'
                 + window.location.hostname
                 + ':8000/ws/chat/'
-                + contactId
+                + this.roomId
                 + '/'
             )
 
@@ -46,14 +58,20 @@ export default {
             }
 
             this.connection.onmessage = (event) => {
+                const data = event.data
                 console.log('message on chatLog')
-                console.log('user:', this.username)
+                console.log(data)
             }
 
             this.connection.onclose = (event) => {
             }
-        }
+        },
     },
+    computed: mapState({
+        username: state => state.account.username,
+        roomId: state => state.room.currentRoomId,
+        messages: state => state.room.messages
+    })
 }
 
 </script>

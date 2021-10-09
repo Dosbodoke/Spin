@@ -1,8 +1,8 @@
 <template>
 <div id="chat">
   <div class="container">
-    <ChatSidebar @chatContact="emitContactId"></ChatSidebar>
-    <ChatLog ref="chatLog"></ChatLog>
+    <ChatSidebar @connectToRoom="connectToRoom"></ChatSidebar>
+    <ChatLog ref="ChatLog"></ChatLog>
   </div>
 </div>
 
@@ -11,7 +11,6 @@
 <script>
 import ChatSidebar from "@/components/ChatSidebar"
 import ChatLog from "@/components/ChatLog"
-import { mapState } from 'vuex'
 
 export default {
   name: 'Chat',
@@ -19,21 +18,11 @@ export default {
     ChatSidebar,
     ChatLog,
   },
-  data() {
-    return {
-      connection: null,
-    }
-  },
   methods: {
-    emitContactId(contactId) {
-      this.$refs.chatLog.chatConnect(contactId);
+    connectToRoom(roomId) {
+      this.$refs.ChatLog.connectToRoom(roomId);
     },
   },
-  computed: mapState({
-    accessToken: state => state.account.accessToken,
-    refreshToken: state => state.account.refreshToken,
-    username: state => state.account.username,
-  })
 }
 </script>
 

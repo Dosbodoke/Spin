@@ -1,6 +1,7 @@
-from django.urls import path
-from .views import ContactAPIView
+from django.urls import re_path, path
+from .views import MessageList, RoomList
 
 urlpatterns = [
-    path('contact/<str:user__username>/', ContactAPIView.as_view()),
+    path('rooms/<username>/', RoomList.as_view()),
+    path('rooms/<chat_id>/messages/', MessageList.as_view()),
 ]

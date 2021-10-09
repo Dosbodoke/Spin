@@ -16,17 +16,19 @@
             <label for="addContact">
                 <font-awesome-icon :icon="icons.faUserPlus" class="profile__icon"></font-awesome-icon>
             </label>
-            <input type="text" placeholder="Contact Username" id="addContact" v-model="addFriendUsername" @keypress.enter="addContact">
+            <input type="text" placeholder="Contact Username" v-model="addFriendUsername">
         </div>
     </div>
-    <div v-for="friend in friends"
-        :key="friend.id"
+    <div v-for="room in rooms"
+        :key="room.id"
+        :ref="'room_' + room.id"
         class="contact"
-        @click="chatContact(friend.id)"
+        @click="connectToRoom(room.id)"
+        :class="room.id == currentRoomId ? 'active' : ''"
         >
         <img src="" alt="" class="contact__img">
         <div class="contact__info">
-            <div class="contact__info__name">{{ friend.username }}</div>
+            <div class="contact__info__name">{{ room.id }}</div>
             <p class="contact__info__status">STATUS PLACEHOLDER TO SEE WHAT HAPPENS WHEN IS TOO BIG BLA BLA BLA BLA BLA BLA</p>
         </div> 
     </div>
@@ -37,7 +39,6 @@
 import { mapState } from 'vuex'
 import { faUserPlus, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { getAPI } from '@/axios-api'
 
 export default {
     name: 'ChatSidebar',
@@ -51,17 +52,15 @@ export default {
                 'faUserPlus': faUserPlus,
                 'faUserCog': faUserCog,
             },
-            friends: []
         }
     },
     async created () {
-        const contact = await this.getContact()
-        this.friends = contact.friends
+        this.getRooms()
         this.connection = new WebSocket(
             'ws://'
             + window.location.hostname
             + ':8000/ws/chat/'
-            + contact.id
+            + this.username
             + '/'
         )
 
@@ -69,34 +68,26 @@ export default {
         }
 
         this.connection.onmessage = (event) => {
-            console.log(event.data)
             console.log('message on ChatSidebar')
-            console.log('user:', this.username)
+            console.log(event.data)
         }
 
         this.connection.onclose = (event) => {
         }
     },
     methods: {
-        async getContact() {
-            let response = await getAPI.get(`api/contact/${this.username}/`, {
-                headers: {Authorization: 'Bearer ' + this.accessToken}
-            })
-            return await response.data
+        getRooms() {
+            this.$store.dispatch('room/getRooms')
         },
-        async addContact () {
-            let response = await getAPI.get(`api/contact/${this.username}/`, {
-                headers: {Authorization: 'Bearer ' + this.accessToken}
-            })
-            console.log(await response.data)
-        },
-        chatContact(contactId) {
-            this.$emit('chatContact', contactId)
+        connectToRoom(contactId) {
+            this.$emit('connectToRoom', contactId)
         },
     },
     computed: mapState({
         username: state => state.account.username,
         accessToken: state => state.account.accessToken,
+        rooms: state => state.room.rooms,
+        currentRoomId: state => state.room.currentRoomId
     })
 }
 
@@ -110,6 +101,10 @@ export default {
 
     &>* {
         padding: 10px;
+    }
+
+    .active {
+        background: yellow;
     }
 
     .contact {
