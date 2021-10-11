@@ -18,7 +18,7 @@ const roomStore = {
             state.currentRoomId = roomId
         },
         updateMessages(state, { messages }) {
-            state.messages = messages
+            state.messages = messages.reverse()
         }
     },
     actions: {
@@ -33,7 +33,6 @@ const roomStore = {
             })
         },
         async getMessages(context) {
-            console.log('waiting getMessages')
             let accessToken = context.rootState.account.accessToken
             let response = await getAPI.get(`api/rooms/${context.state.currentRoomId}/messages`, {
                 headers: {Authorization: 'Bearer ' + accessToken}
@@ -46,7 +45,7 @@ const roomStore = {
             context.commit('updateCurrentRoom', {
                 "roomId": data.roomId,
             })
-        }
+        },
 
     },
     modules: {

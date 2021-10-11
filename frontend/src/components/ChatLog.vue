@@ -1,10 +1,11 @@
 <template>
 <div id="chat">
     <div class="log">
-        <div v-for="message in messages"
+        <div v-for="(message, index) in messages"
              :key="message.id"
              class="message">
-            {{ message.message }}
+             <div v-if="index == 0 || message.sender != messages[index - 1].sender"  class="message_author">{{ message.sender }}</div>
+            <div class="message__text">{{ message.message }}</div>
         </div>
     </div>
     <div class="message_input">
@@ -16,6 +17,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { getAPI } from '@/axios-api'
 
 export default {
     name: 'ChatLog',
@@ -43,8 +45,6 @@ export default {
                 roomId: roomId,
             })
 
-            this.$store.dispatch('room/getMessages')
-            
             this.connection = new WebSocket(
                 'ws://'
                 + window.location.hostname
@@ -54,7 +54,7 @@ export default {
             )
 
             this.connection.onopen = (event) => {
-                console.log('open')
+                this.$store.dispatch('room/getMessages')
             }
 
             this.connection.onmessage = (event) => {
