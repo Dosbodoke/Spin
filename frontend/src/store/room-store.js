@@ -19,6 +19,14 @@ const roomStore = {
         },
         updateMessages(state, { messages }) {
             state.messages = messages.reverse()
+        },
+        appendMessage(state, { message }) {
+            console.log(state.messages)
+            console.log('appendMessage')
+            console.log(message)
+            state.messages.push(message)
+            console.log(state.messages)
+
         }
     },
     actions: {
@@ -41,12 +49,24 @@ const roomStore = {
                 'messages': await response.data
             })
         },
+        async postMessage(context, data) {
+            let accessToken = context.rootState.account.accessToken
+            let response = await getAPI.post(`api/rooms/${context.state.currentRoomId}/messages/`, data ,{
+                headers: {Authorization: 'Bearer ' + accessToken},
+            })
+            return await response.data
+        },
         updateRoomId(context, data) {
             context.commit('updateCurrentRoom', {
                 "roomId": data.roomId,
             })
         },
-
+        addMessage(context, message_json) {
+            const message = JSON.parse(message_json)
+            context.commit('appendMessage', {
+                'message': message
+            })
+        }
     },
     modules: {
     }

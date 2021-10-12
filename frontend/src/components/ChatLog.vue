@@ -29,12 +29,20 @@ export default {
     },
     methods: {
         sendMessage() {
-            this.connection.send(JSON.stringify({
+            this.$store.dispatch('room/postMessage', {
                 'message': this.message_input,
                 'sender': this.username,
-                'roomId': this.roomId
-            }))
-            this.message_input = ''
+            })
+              .then(response => {
+                  this.connection.send(JSON.stringify({
+                      'room_id': this.roomId,
+                      ...response
+                  }))
+                  this.message_input = ''
+              })
+              .catch(error => {
+                  console.log(error)
+              })
         },
         connectToRoom(roomId) {
             if (this.connection != null) {
@@ -58,9 +66,7 @@ export default {
             }
 
             this.connection.onmessage = (event) => {
-                const data = event.data
-                console.log('message on chatLog')
-                console.log(data)
+                this.$store.dispatch('room/addMessage', event.data)
             }
 
             this.connection.onclose = (event) => {

@@ -1,15 +1,22 @@
-from django.db import models
-from django.db.models import fields
 from rest_framework import serializers
-from rest_framework.fields import ReadOnlyField
+from rest_framework.fields import CharField
 from .models import Message, Room
 from account.models import CustomUser
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = ReadOnlyField(source='sender.username')
+    sender = CharField(source='sender.username')
+
     class Meta:
         model = Message
         fields = ('id', 'message', 'sender', 'created_at')
+
+    def create(self, validated_data):
+        sender = CustomUser.objects.get(username=validated_data['sender']['username'])
+        room = Room.objects.get(pk=validated_data['room_id'])
+        return room.messages.create(
+            message = validated_data['message'],
+            sender = sender,
+        )
 
 class ParticipantSerializer(serializers.ModelSerializer):
     class Meta:

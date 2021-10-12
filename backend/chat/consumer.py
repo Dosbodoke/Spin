@@ -40,26 +40,33 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        print("DATA")
+        print(data)
+        message_id = data['id']
         message = data['message']
         sender = data['sender']
-        room_id = data['roomId']
+        created_at = data['created_at']
+        room_id = data['room_id']
+
+        await self.notify_participants(room_id)
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": "chat_message",
+                "id": message_id,
                 "message": message,
                 "sender": sender,
+                "created_at": created_at,
             }
         )
 
-        await self.notify_participants(room_id)
-
     async def chat_message(self, event):
-        message = event['message']
-        sender = event['sender']
         await self.send(text_data=json.dumps({
-            'message': message,
-            'sender': sender
+            'message': event['message'],
+            'sender': event['sender'],
+            'id': event['id'],
+            'created_at': event['created_at'],
         }))
 
     async def sidebar_notification(self, event):
