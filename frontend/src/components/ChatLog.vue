@@ -1,14 +1,21 @@
 <template>
-<div id="chat">
+<div id="chat__log">
     <div class="log">
-        <div v-for="(message, index) in messages"
-             :key="message.id"
-             class="message">
-             <div v-if="index == 0 || message.sender != messages[index - 1].sender"  class="message_author">{{ message.sender }}</div>
-            <div class="message__text">{{ message.message }}</div>
-        </div>
+        <ul class="message_list">
+            <li v-for="(message, index) in messages"
+                :key="message.id"
+                :ref="'message-' + message.id"
+                class="message">
+                <div v-if="index == 0 || message.sender != messages[index - 1].sender"
+                     class="message__author">
+                     {{ message.sender === this.username ? 'You': message.sender }}:
+                </div>
+                <div class="message__text">{{ message.message }}</div>
+            </li>
+        </ul>
     </div>
-    <div class="message_input">
+    <div class="message_input"
+         v-show="this.roomId != null">
         <input type="text" v-model="message_input" @keyup.enter="sendMessage" placeholder="Type a message...">
         <img @click="sendMessage" src="@/assets/send.svg" alt="">
     </div>
@@ -17,7 +24,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getAPI } from '@/axios-api'
 
 export default {
     name: 'ChatLog',
@@ -45,6 +51,10 @@ export default {
               })
         },
         connectToRoom(roomId) {
+            if (this.roomId == roomId) {
+                return
+            }
+
             if (this.connection != null) {
                 this.connection.close()
             }
@@ -63,6 +73,7 @@ export default {
 
             this.connection.onopen = (event) => {
                 this.$store.dispatch('room/getMessages')
+                  .then(response => this.$refs[`message-${this.messages.at(-1).id}`].scrollIntoView())
             }
 
             this.connection.onmessage = (event) => {
@@ -84,21 +95,37 @@ export default {
 
 <style lang="scss" scoped>
 
-#chat {
+#chat__log {
     position: relative;
     flex-grow: 1;
     background-color: #2C394B;
     
     .log {
-        height: calc(100% - 40px);
-        padding-left: 20px;
         display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
+        flex-direction: column-reverse;
+        height: calc(100% - 40px);
+        overflow-y: auto;
 
-        .message {
-            position: relative;
-            bottom: 0;
+        .message_list {
+            list-style: none;
+            padding-left: 1rem;
+            margin: 0 0 .5rem 0;
+
+            .message {
+                position: relative;
+                bottom: 0;
+
+                .message__author {
+                    font-weight: bold;
+                }
+
+                .message__text {
+                    color: #CBCBCB;
+                    padding: 0 1rem;
+                    word-break: break-all;
+                }
+
+            }
         }
     }
 

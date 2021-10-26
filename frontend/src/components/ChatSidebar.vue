@@ -1,5 +1,5 @@
 <template>
-<div id="sidebar">
+<div id="chat__sidebar">
     <div class="profile">
         <div class="contact">
             <img src="" alt="" class="contact__img">
@@ -20,15 +20,14 @@
         </div>
     </div>
     <div v-for="room in rooms"
-        :key="room.id"
-        :ref="'room_' + room.id"
-        class="contact"
-        @click="connectToRoom(room.id)"
-        :class="room.id == currentRoomId ? 'active' : ''"
-        >
+         :key="room.id"
+         :ref="'room_' + room.id"
+         class="contact"
+         @click="connectToRoom(room.id)"
+         :class="room.id == currentRoomId ? 'active' : ''">
         <img src="" alt="" class="contact__img">
         <div class="contact__info">
-            <div class="contact__info__name">{{ room.id }}</div>
+            <div class="contact__info__name">{{ getRoomName(room) }}</div>
             <p class="contact__info__status">STATUS PLACEHOLDER TO SEE WHAT HAPPENS WHEN IS TOO BIG BLA BLA BLA BLA BLA BLA</p>
         </div> 
     </div>
@@ -82,6 +81,13 @@ export default {
         connectToRoom(contactId) {
             this.$emit('connectToRoom', contactId)
         },
+        getRoomName(room) {
+            if ( room.is_group === true ){
+                return room.room_name
+            } 
+
+            return room.participants.find(user => user.username != this.username).username
+        }
     },
     computed: mapState({
         username: state => state.account.username,
@@ -95,7 +101,7 @@ export default {
 
 <style lang="scss" scoped>
 
-#sidebar {
+#chat__sidebar {
     width: 300px;
     background-color: #37475e;
 
@@ -104,7 +110,7 @@ export default {
     }
 
     .active {
-        background: yellow;
+        background: #485f80;
     }
 
     .contact {

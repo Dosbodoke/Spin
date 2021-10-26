@@ -45,7 +45,7 @@ const roomStore = {
             let response = await getAPI.get(`api/rooms/${context.state.currentRoomId}/messages`, {
                 headers: {Authorization: 'Bearer ' + accessToken}
             })
-            context.commit('updateMessages', {
+            await context.commit('updateMessages', {
                 'messages': await response.data
             })
         },

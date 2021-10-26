@@ -8,13 +8,16 @@ const accountStore = {
       username: null,
     },
     mutations: {
+      refreshAccessToken(state, {access}) {
+        state.accessToken = access
+      },
       setToken(state, { access, refresh }) {
         state.accessToken = access
         state.refreshToken = refresh
       },
       setUsername(state, { username }) {
         state.username = username
-      }
+      },
     },
     actions: {
       Login(context, userCredentials) {
@@ -51,10 +54,21 @@ const accountStore = {
               reject(error)
             })
         })
+      },
+      refreshToken(context) {
+        return new Promise((resolve, reject) => {
+          getAPI.post('api/auth/token/refresh/', {
+            refresh: context.state.refreshToken
+          })
+            .then(response => {
+              context.commit('refreshAccessToken', {
+                access: response.data.access
+              })
+              resolve({accessToken: response.data.access})
+            })
+        })
       }
     },
-    modules: {
-    }
   }
 
 export { accountStore }
