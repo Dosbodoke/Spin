@@ -1,4 +1,10 @@
 <template>
+<Modal @close="toggleModal()" :modalActive="modalActive">
+    <div class="modal-content">
+        <h1>this is a Modal Header</h1>
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora sunt sit, porro suscipit aspernatur nobis. Fugit blanditiis quia aperiam magni illo delectus cum necessitatibus magnam, reiciendis ipsum laboriosam, natus impedit!</p>
+    </div>
+</Modal>
 <div id="chat__sidebar">
     <div class="profile">
         <div class="contact">
@@ -8,7 +14,7 @@
                 <p class="contact__info__status">STATUS PLACEHOLDER TO SEE WHAT HAPPENS WHEN IS TOO BIG BLA BLA BLA BLA BLA BLA</p>
             </div>
         </div>
-        <div class="profile__settings">
+        <div class="profile__settings" @click="toggleModal()">
             <font-awesome-icon :icon="icons.faUserCog" class="profile__icon"></font-awesome-icon>
             <span>Settings</span>
         </div>
@@ -38,15 +44,19 @@
 import { mapState } from 'vuex'
 import { faUserPlus, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Modal from "@/components/Modal.vue";
+import { ref } from "vue";
 
 export default {
     name: 'ChatSidebar',
     components: {
         FontAwesomeIcon,
+        Modal
     },
     data () {
         return {
             addFriendUsername: '',
+            modalActive: ref(false),
             icons: {
                 'faUserPlus': faUserPlus,
                 'faUserCog': faUserCog,
@@ -75,6 +85,9 @@ export default {
         }
     },
     methods: {
+        toggleModal() {
+            this.modalActive = !this.modalActive
+        },
         getRooms() {
             this.$store.dispatch('room/getRooms')
         },
@@ -151,6 +164,11 @@ export default {
 
     .profile {
         background-color: #1a212c;
+
+        .contact:hover{
+            background-color: #1a212c;
+            cursor: default;
+        }
 
         &__settings {
             margin-top: 10px;

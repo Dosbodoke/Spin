@@ -108,12 +108,17 @@ export default {
 
         .message_list {
             list-style: none;
-            padding-left: 1rem;
-            margin: 0 0 .5rem 0;
+            padding: 0;
+            margin: 0 0 .5rem ;
 
             .message {
+                padding-left: 1rem;
                 position: relative;
                 bottom: 0;
+
+                &:hover {
+                    background-color: rgba($color: #000000, $alpha: .2);
+                }
 
                 .message__author {
                     font-weight: bold;

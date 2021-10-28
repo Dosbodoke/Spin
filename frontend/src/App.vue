@@ -15,11 +15,14 @@ export default {
 
 
 <style lang="scss">
-body {
-  font-family: 'Poppins', sans-serif;
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
   background-color: #082032;
   color: #fff;
   height: 100vh;
