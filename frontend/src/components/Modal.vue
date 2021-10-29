@@ -81,12 +81,12 @@ export default {
         max-width: 640px;
         width: 80%;
         background-color: #323232;
-        padding: 64px 16px;
+        padding: 1rem;
 
         .close {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 1rem;
+            right: 1rem;
             cursor: pointer;
             width: 50px;
             height: 50px;
