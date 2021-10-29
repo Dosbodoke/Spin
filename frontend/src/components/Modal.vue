@@ -3,7 +3,7 @@
     <div v-show="modalActive" class="modal">
         <transition name="modal-animation-inner">
             <div v-show="modalActive" class="modal-inner">
-                <font-awesome-icon :icon="icons.faTimesCircle" class="close"  @click="close"></font-awesome-icon>
+                <font-awesome-icon :icon="icons.faTimesCircle" class="close"  @click="this.$emit('close')"></font-awesome-icon>
                 <!-- Modal Content -->
                 <slot />
             </div>
@@ -21,7 +21,11 @@ export default {
     components: {
         FontAwesomeIcon,
     },
-    props: ['modalActive'],
+    props: {modalActive: {
+        required: true,
+        type: Boolean,
+        default: false,
+    }},
     data () {
         return {
             icons: {
@@ -29,11 +33,6 @@ export default {
             },
         }
     },
-    methods: {
-        close() {
-            this.$emit('close')
-        },
-    }
 }
 </script>
 

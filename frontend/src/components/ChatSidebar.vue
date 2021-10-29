@@ -1,19 +1,6 @@
 <template>
-<Modal :ref="'Settings_Modal'"
-       @close="toggleModal('Settings_Modal')" 
-       :modalActive="settingsModalActive">
-    <div class="modal-content">
-        <h1>this is a Modal Header</h1>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora sunt sit, porro suscipit aspernatur nobis. Fugit blanditiis quia aperiam magni illo delectus cum necessitatibus magnam, reiciendis ipsum laboriosam, natus impedit!</p>
-    </div>
-</Modal>
-<Modal :ref="'NewRoom_Modal'" 
-       @close="toggleModal('NewRoom_Modal')" 
-       :modalActive="newRoomModalActive">
-    <div class="modal-content">
-        <h1>JUST A HEADER</h1>
-    </div>
-</Modal>
+<SettingsModal ref="settingsmodal"/>
+<NewRoomModal ref="newroommodal"/>
 <div id="chat__sidebar">
     <div class="profile">
         <div class="contact">
@@ -23,12 +10,12 @@
                 <p class="contact__info__status">STATUS PLACEHOLDER TO SEE WHAT HAPPENS WHEN IS TOO BIG BLA BLA BLA BLA BLA BLA</p>
             </div>
         </div>
-        <div class="profile__settings" @click="toggleModal('Settings_Modal')">
-            <font-awesome-icon :icon="icons.faUserCog" class="profile__icon"></font-awesome-icon>
+        <div class="profile__button profile__settings" @click="activateModal('settingsmodal')">
+            <font-awesome-icon :icon="icons.faUserCog" class="profile__button__icon"></font-awesome-icon>
             <span>Settings</span>
         </div>
-        <div @click="toggleModal('NewRoom_Modal')">
-            <font-awesome-icon :icon="icons.faUserPlus" class="profile__icon"></font-awesome-icon>
+        <div class="profile__button newRoom" @click="activateModal('newroommodal')">
+            <font-awesome-icon :icon="icons.faUserPlus" class="profile__button__icon"></font-awesome-icon>
             <span>Join New Room</span>
         </div>
     </div>
@@ -51,21 +38,20 @@
 import { mapState } from 'vuex'
 import { faUserPlus, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import Modal from "@/components/Modal.vue";
-import { ref } from "vue";
+import SettingsModal from "@/components/SettingsModal.vue";
+import NewRoomModal from "@/components/NewRoomModal.vue"
 
 export default {
     name: 'ChatSidebar',
     emits: ["connectroom"],
     components: {
         FontAwesomeIcon,
-        Modal
+        NewRoomModal,
+        SettingsModal,
     },
     data () {
         return {
             addFriendUsername: '',
-            newRoomModalActive: false,
-            settingsModalActive: false,
             icons: {
                 'faUserPlus': faUserPlus,
                 'faUserCog': faUserCog,
@@ -94,15 +80,8 @@ export default {
         }
     },
     methods: {
-        toggleModal(modalRef) {
-            switch (modalRef) {
-                case modalRef === 'NewRoom_modal':
-                    this.newRoomModalActive = !this.newRoomModalActive;
-                    break;
-                case modalRef === "Settings_Modal":
-                    this.settingsModalActive = !this.settingsModalActive;
-                    break;
-            }
+        activateModal(modal) {
+            this.$refs[modal].toggleModal()
         },
         getRooms() {
             this.$store.dispatch('room/getRooms')
@@ -183,24 +162,23 @@ export default {
             cursor: default;
         }
 
-        &__settings {
-            margin-top: 10px;
+        &__button {
             cursor: pointer;
-        }
 
-        &__icon {
-            padding-right: 10px;
-        }
-
-        #addContact {
-            color: rgb(255, 255, 255);
-            background-color: transparent;
-            border: 0;
-            outline: none;
-
-            &:focus {
-                border-bottom: 2px solid #fff;
+            &__icon {
+                width: 2rem;
             }
+        }
+    }
+
+    .new_room {
+        color: rgb(255, 255, 255);
+        background-color: transparent;
+        border: 0;
+        outline: none;
+
+        &:focus {
+            border-bottom: 2px solid #fff;
         }
     }
 }
