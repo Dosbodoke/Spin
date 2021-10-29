@@ -54,7 +54,6 @@ export default {
             if (this.roomId == roomId) {
                 return
             }
-
             if (this.connection != null) {
                 this.connection.close()
             }

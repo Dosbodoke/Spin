@@ -1,8 +1,17 @@
 <template>
-<Modal @close="toggleModal()" :modalActive="modalActive">
+<Modal :ref="'Settings_Modal'"
+       @close="toggleModal('Settings_Modal')" 
+       :modalActive="settingsModalActive">
     <div class="modal-content">
         <h1>this is a Modal Header</h1>
         <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Tempora sunt sit, porro suscipit aspernatur nobis. Fugit blanditiis quia aperiam magni illo delectus cum necessitatibus magnam, reiciendis ipsum laboriosam, natus impedit!</p>
+    </div>
+</Modal>
+<Modal :ref="'NewRoom_Modal'" 
+       @close="toggleModal('NewRoom_Modal')" 
+       :modalActive="newRoomModalActive">
+    <div class="modal-content">
+        <h1>JUST A HEADER</h1>
     </div>
 </Modal>
 <div id="chat__sidebar">
@@ -14,22 +23,20 @@
                 <p class="contact__info__status">STATUS PLACEHOLDER TO SEE WHAT HAPPENS WHEN IS TOO BIG BLA BLA BLA BLA BLA BLA</p>
             </div>
         </div>
-        <div class="profile__settings" @click="toggleModal()">
+        <div class="profile__settings" @click="toggleModal('Settings_Modal')">
             <font-awesome-icon :icon="icons.faUserCog" class="profile__icon"></font-awesome-icon>
             <span>Settings</span>
         </div>
-        <div>
-            <label for="addContact">
-                <font-awesome-icon :icon="icons.faUserPlus" class="profile__icon"></font-awesome-icon>
-            </label>
-            <input type="text" placeholder="Contact Username" v-model="addFriendUsername">
+        <div @click="toggleModal('NewRoom_Modal')">
+            <font-awesome-icon :icon="icons.faUserPlus" class="profile__icon"></font-awesome-icon>
+            <span>Join New Room</span>
         </div>
     </div>
     <div v-for="room in rooms"
          :key="room.id"
          :ref="'room_' + room.id"
          class="contact"
-         @click="connectToRoom(room.id)"
+         @click="this.$emit('connectroom', room.id)"
          :class="room.id == currentRoomId ? 'active' : ''">
         <img src="" alt="" class="contact__img">
         <div class="contact__info">
@@ -49,6 +56,7 @@ import { ref } from "vue";
 
 export default {
     name: 'ChatSidebar',
+    emits: ["connectroom"],
     components: {
         FontAwesomeIcon,
         Modal
@@ -56,7 +64,8 @@ export default {
     data () {
         return {
             addFriendUsername: '',
-            modalActive: ref(false),
+            newRoomModalActive: false,
+            settingsModalActive: false,
             icons: {
                 'faUserPlus': faUserPlus,
                 'faUserCog': faUserCog,
@@ -85,14 +94,18 @@ export default {
         }
     },
     methods: {
-        toggleModal() {
-            this.modalActive = !this.modalActive
+        toggleModal(modalRef) {
+            switch (modalRef) {
+                case modalRef === 'NewRoom_modal':
+                    this.newRoomModalActive = !this.newRoomModalActive;
+                    break;
+                case modalRef === "Settings_Modal":
+                    this.settingsModalActive = !this.settingsModalActive;
+                    break;
+            }
         },
         getRooms() {
             this.$store.dispatch('room/getRooms')
-        },
-        connectToRoom(contactId) {
-            this.$emit('connectToRoom', contactId)
         },
         getRoomName(room) {
             if ( room.is_group === true ){

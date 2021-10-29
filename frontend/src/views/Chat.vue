@@ -1,7 +1,7 @@
 <template>
 <div id="chat">
   <div class="container">
-    <ChatSidebar @connectToRoom="connectToRoom"></ChatSidebar>
+    <ChatSidebar @connectroom="connectToRoom"></ChatSidebar>
     <ChatLog ref="ChatLog"></ChatLog>
   </div>
 </div>
