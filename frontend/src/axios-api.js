@@ -8,7 +8,7 @@ const getAPI = axios.create({
 
 // Interceptor to refresh access token if it's expired.
 getAPI.interceptors.response.use(response => {
-    return response;
+    return response
 }, error => {
     if (error.response.status === 401) {
         console.log('Refreshing token')
@@ -18,7 +18,7 @@ getAPI.interceptors.response.use(response => {
               return getAPI.request(error.config)
           })
     }
-    return error
+    return Promise.reject(error);
 })
 
 export { getAPI }

@@ -72,7 +72,11 @@ export default {
 
             this.connection.onopen = (event) => {
                 this.$store.dispatch('room/getMessages')
-                  .then(response => this.$refs[`message-${this.messages.at(-1).id}`].scrollIntoView())
+                  .then(response => {
+                      if (response.data.length) {
+                          this.$refs[`message-${this.messages.at(-1).id}`].scrollIntoView()
+                      }
+                  })
             }
 
             this.connection.onmessage = (event) => {

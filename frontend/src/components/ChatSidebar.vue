@@ -91,12 +91,11 @@ export default {
                 return room.room_name
             } 
 
-            return room.participants.find(user => user.username != this.username).username
+            return room.participants.find(username => username != this.username)
         }
     },
     computed: mapState({
         username: state => state.account.username,
-        accessToken: state => state.account.accessToken,
         rooms: state => state.room.rooms,
         currentRoomId: state => state.room.currentRoomId
     })

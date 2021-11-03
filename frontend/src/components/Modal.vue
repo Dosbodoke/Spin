@@ -3,9 +3,13 @@
     <div v-show="modalActive" class="modal">
         <transition name="modal-animation-inner">
             <div v-show="modalActive" class="modal-inner">
-                <font-awesome-icon :icon="icons.faTimesCircle" class="close"  @click="this.$emit('close')"></font-awesome-icon>
-                <!-- Modal Content -->
-                <slot />
+                <div class="header">
+                    <slot name="title"/>
+                    <font-awesome-icon :icon="icons.faTimesCircle" class="close"  @click="this.$emit('close')"></font-awesome-icon>
+                </div>
+                <div class="content">
+                    <slot name="content" />
+                </div>
             </div>
         </transition>
     </div>
@@ -78,18 +82,25 @@ export default {
 
     .modal-inner {
         position: relative;
+        max-height: 90%;
+        overflow-y: auto;
         max-width: 640px;
         width: 80%;
         background-color: #323232;
         padding: 1rem;
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: .5rem;
+            border-bottom: 2px solid #ffffff;
+        }
+
         .close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
             cursor: pointer;
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             color: hsla(0, 100%, 58%, 0.615);
 
             &:hover {

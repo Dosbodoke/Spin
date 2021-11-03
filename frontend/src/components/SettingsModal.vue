@@ -1,7 +1,12 @@
 <template>
 <Modal :modalActive="modalActive"
        @close="toggleModal()">
-<h1>settings</h1>
+    <template v-slot:title>
+        <h1>Settings</h1>
+    </template>
+    <template v-slot:content>
+        <div>teste</div>
+    </template>
 </Modal>
 </template>
 

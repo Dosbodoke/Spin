@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from "@/store"
-import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
 import Chat from '@/views/Chat.vue'
 import Register from '@/views/Register.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Login',
+    component: Login
   },
   {
     path: '/register',
@@ -32,7 +32,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth ) {
     if (store.state.account.accessToken === null) {
       next({
-        name: "Home",
+        name: "Login",
       })
     } else {
       next()

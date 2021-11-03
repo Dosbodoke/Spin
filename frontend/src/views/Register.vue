@@ -23,18 +23,24 @@
                 @keypress.enter="submit"
         >
         <div v-if="passwordMatch == false" class="error">Passwords don't match.</div>
-
         <div v-if="error.active" class="error">{{ error.errorMessage }}</div>
-        <button>Create Account</button>
-        <div>Already have an account? <router-link to="/" class="router__link">Log-in here</router-link></div>
+        <PrimaryButton class="button">Create Account</PrimaryButton>
+        <div>
+          <p>Already have an account?</p>
+          <router-link to="/" class="router__link">Log-in here</router-link>
+        </div>
       </form>
     </div>
   </div>
 </template>
 
 <script>
+import PrimaryButton from "@/components/PrimaryButton.vue"
 export default {
     name: 'Register',
+    components: {
+      PrimaryButton
+    },
     data () {
         return {
             error: {
@@ -120,15 +126,6 @@ export default {
         padding: 10px 0 10px 15px;
         background-color: #334756;
         color: #fff;
-      }
-
-      button {
-        font-size: 1.2rem;
-        color: #fff;
-        border: 0;
-        background-color: #FF4C29;
-        padding: 1rem 0;
-        cursor: pointer;
       }
 
       .router__link {

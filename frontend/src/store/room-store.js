@@ -9,7 +9,7 @@ const roomStore = {
     },
     mutations: {
         updateRooms(state, { rooms }) {
-            state.rooms = rooms
+            state.rooms.push(...rooms)
         },
         updateMessages(state, { messages }) {
             state.messages = messages
@@ -21,12 +21,7 @@ const roomStore = {
             state.messages = messages.reverse()
         },
         appendMessage(state, { message }) {
-            console.log(state.messages)
-            console.log('appendMessage')
-            console.log(message)
             state.messages.push(message)
-            console.log(state.messages)
-
         }
     },
     actions: {
@@ -40,6 +35,20 @@ const roomStore = {
                 "rooms": await response.data,
             })
         },
+        newRoom(context, data) {
+            return new Promise ((resolve, reject) => {
+                getAPI.post(`api/rooms/${context.rootState.account.username}/`, data, {
+                    headers: {Authorization: 'Bearer ' + context.rootState.account.accessToken},
+                })
+                  .then(response => {
+                    context.commit('updateRooms', {"rooms": [response.data]})
+                    resolve()
+                  })
+                  .catch(error => {
+                      reject(error)
+                  })
+            })
+        },
         async getMessages(context) {
             let accessToken = context.rootState.account.accessToken
             let response = await getAPI.get(`api/rooms/${context.state.currentRoomId}/messages`, {
@@ -48,6 +57,7 @@ const roomStore = {
             await context.commit('updateMessages', {
                 'messages': await response.data
             })
+            return response
         },
         async postMessage(context, data) {
             let accessToken = context.rootState.account.accessToken
@@ -65,6 +75,11 @@ const roomStore = {
             const message = JSON.parse(message_json)
             context.commit('appendMessage', {
                 'message': message
+            })
+        },
+        pushNewRoom(context, room) {
+            context.commit('updateRooms', {
+                rooms: [room]
             })
         }
     },
