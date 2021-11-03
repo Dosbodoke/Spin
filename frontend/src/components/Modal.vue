@@ -95,6 +95,7 @@ export default {
             align-items: center;
             padding-bottom: .5rem;
             border-bottom: 2px solid #ffffff;
+            font-size: 1.3rem;
         }
 
         .close {

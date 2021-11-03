@@ -5,21 +5,37 @@
         <h1>Join Room</h1>
     </template>
     <template v-slot:content>
-        <div>
+        <div class="form_container">
             <h2>Direct contact</h2>
-            <p>Start a chat with semeone.</p>
+            <p>A private room to chat direct with someone.</p>
             <form @submit.prevent="newRoom('direct')">
-                <label for="direct_username">Contact Username:</label>
-                <input id="direct_username" type="text" v-model="directUsername">
+                <div>
+                    <label for="direct_username">Contact Username:</label>
+                    <input id="direct_username" type="text" v-model="directUsername">
+                </div>
                 <PrimaryButton class="form_button">Chat now!</PrimaryButton>
             </form>
         </div>
-        <div>
+        <div class="form_container">
             <h2>Create Group</h2>
-            <p>Crate a room where you can chat with multiple persons.</p>
+            <p>A room where you can chat with multiple persons.</p>
             <form @submit.prevent="newRoom('group')">
-                <label for="user_list">Room Name:</label>
-                <input id="user_list" type="text">
+                <div>
+                    <label for="room_name">Room Name:</label>
+                    <input id="room_name" type="text" v-model="roomName">
+                </div>
+                <div>
+                    <label for="user_list">Participants:</label>
+                    <input id="user_list" 
+                           type="text"
+                           @keypress.enter.prevent=""
+                           @keyup="userListInputHandler"
+                           v-model="groupUsername">
+                </div>
+                <div v-for="username in groupUsernameList"
+                     :key="username">
+                     {{username}}
+                     </div>
                 <PrimaryButton class="form_button">Create group</PrimaryButton>
             </form>
         </div>
@@ -42,6 +58,9 @@ export default {
         return {
             modalActive: false,
             directUsername: null,
+            groupUsername: null,
+            groupUsernameList: [],
+            roomName: null,
         }
     },
     methods: {
@@ -49,21 +68,32 @@ export default {
             this.modalActive = !this.modalActive
         },
         newRoom(type) {
-            let data
-            if (type == 'direct') {
-                data = {
-                    'participants': [this.username, this.directUsername,]
-                }
+            let payload = {
+                "participants": [this.username],
+                "room_name": "",
+                "is_group": false,
+            }
+            if (type === 'direct') {
+                payload.participants.push(this.directUsername);
             }
 
-            if (type == 'group') {
-                console.log('INSIDE GROUP')
-                return
+            if (type === 'group') {
+                payload.participants.push(...this.groupUsernameList);
+                payload.is_group = true;
+                payload.room_name = this.roomName
             }
-            this.$store.dispatch('room/newRoom', data)
+
+            this.$store.dispatch('room/newRoom', payload)
               .catch(error => {
+                  console.log('error')
                   console.log(error.message)
               })
+        },
+        userListInputHandler(event) {
+            if ([188, 13].includes(event.keyCode)) {
+                this.groupUsernameList.push(this.groupUsername.replace(',', ''))
+                this.groupUsername = ""
+            }
         }
     },
     computed: mapState({
@@ -73,8 +103,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form_button {
-    display: block;
-    margin-top: 1rem;
+.form_container {
+
+    &:last-of-type {
+        margin-top: 1.5rem;
+    }
+
+    .form_button {
+        display: block;
+        margin-top: .8rem;
+        width: 150px;
+    }
 }
 </style>
