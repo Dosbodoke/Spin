@@ -1,5 +1,5 @@
 import json
-from channels.generic.websocket import AsyncJsonWebsocketConsumer, WebsocketConsumer
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from .models import Room
 from channels.db import database_sync_to_async
 
@@ -40,8 +40,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print("DATA")
-        print(data)
         message_id = data['id']
         message = data['message']
         sender = data['sender']

@@ -1,6 +1,7 @@
 from .serializers import CustomUserSerializer
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
+from chat.models import Contact
 
 class CustomUserCreateAPIView(generics.CreateAPIView):
     """
@@ -15,3 +16,4 @@ class CustomUserCreateAPIView(generics.CreateAPIView):
         instance = serializer.save()
         instance.set_password(instance.password)
         instance.save()
+        Contact.objects.create(user=instance)
