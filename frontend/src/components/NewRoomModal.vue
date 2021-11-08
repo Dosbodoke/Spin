@@ -22,7 +22,11 @@
             <form @submit.prevent="newRoom('group')">
                 <div>
                     <label for="room_name">Room Name:</label>
-                    <input id="room_name" type="text" v-model="roomName">
+                    <input id="room_name"
+                           type="text" 
+                           v-model="roomName"
+                           minlength="4"
+                           required>
                 </div>
                 <div>
                     <label for="user_list">Participants:</label>
