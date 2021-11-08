@@ -10,6 +10,10 @@ class Message(models.Model):
     def __str__(self):
         return f'message from {self.sender.username}'
 
+class Contact(models.Model):
+    user = models.OneToOneField(CustomUser, related_name="contact", on_delete=models.CASCADE)
+    friends = models.ManyToManyField('self', blank=True)
+
 class Room(models.Model):
     room_name = models.CharField(max_length=28, blank=True, null=True)
     participants = models.ManyToManyField(CustomUser)
